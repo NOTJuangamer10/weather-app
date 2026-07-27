@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App - Beta 1</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Weather App</h1>
+        <p>beta 1 - busca el clima de cualquier ciudad</p>
+    </header>
+
+    <main>
+
+        <section id="busqueda">
+            <form id="form-clima">
+                <input type="text" id="input-ciudad" placeholder="escribe una ciudad..." required>
+                <button type="submit">Buscar</button>
+            </form>
+            <p id="cargando">buscando...</p>
+            <p id="error"></p>
+        </section>
+
+        <section id="resultado">
+            <h2 id="ciudad"></h2>
+            <div id="temp"></div>
+            <div id="descripcion"></div>
+            <div id="detalles"></div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Weather App Beta 1 · datos de OpenWeatherMap</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
