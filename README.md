@@ -36,7 +36,7 @@ Replace the `API_KEY` value at the top of `app.js` with your own.
 ## Roadmap
 
 - [x] **Beta 1** — basic weather lookup
-- [ ] **Beta 2** — redesigned UI (glassmorphism, gradients, icons)
+- [x] **Beta 2** — redesigned UI (glassmorphism, gradients, icons)
 - [ ] **Beta 3** — 5-day forecast + temperature chart
 - [ ] **Beta 4** — geolocation + favorites + PWA installable
 
