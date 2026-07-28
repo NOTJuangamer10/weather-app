@@ -1,5 +1,6 @@
-/* estilos de Weather App beta 1
-   diseño simple, gris y azul, sin florituras */
+/* estilos de Weather App beta 2
+   diseño con glassmorphism y GIF de fondo segun el clima
+   gris y azul oscuro para que se vea bien sobre los GIFs */
 
 * {
     box-sizing: border-box;
@@ -9,17 +10,34 @@
 
 body {
     font-family: system-ui, Arial, sans-serif;
-    background: #f0f4f8;
-    color: #1e293b;
+    background: linear-gradient(135deg, #485461, #28313b) no-repeat fixed;
+    background-size: cover;
+    color: white;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     line-height: 1.5;
+    transition: background-image 0.8s ease;
+}
+
+/* oscurecemos un poco el fondo del GIF para que el texto se lea bien */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: -1;
+    pointer-events: none;
 }
 
 header {
-    background: #475569;
-    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     padding: 18px 20px;
 }
 
@@ -31,7 +49,7 @@ header h1 {
 
 header p {
     font-size: 13px;
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
 main {
@@ -43,11 +61,14 @@ main {
 }
 
 section {
-    background: white;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 16px;
     padding: 18px;
     margin-bottom: 18px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 #resultado {
@@ -64,19 +85,25 @@ form {
 input {
     flex: 1;
     padding: 10px;
-    border: 1px solid #cbd5e1;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 4px;
     font-size: 14px;
     font-family: inherit;
+    color: white;
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
 }
 
 input:focus {
     outline: none;
-    border-color: #475569;
+    border-color: rgba(255, 255, 255, 0.6);
 }
 
 button {
-    background: #475569;
+    background: rgba(255, 255, 255, 0.25);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -87,22 +114,35 @@ button {
 }
 
 button:hover {
-    background: #334155;
+    background: rgba(255, 255, 255, 0.4);
 }
 
 /* mensajes */
 #cargando {
     display: none;
-    color: #64748b;
+    color: rgba(255, 255, 255, 0.85);
     font-size: 14px;
     margin-top: 10px;
+    animation: pulse 1.5s ease infinite;
 }
 
 #error {
-    color: #dc2626;
+    color: rgba(255, 200, 200, 0.95);
     font-size: 14px;
     margin-top: 10px;
     display: none;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
 }
 
 /* resultado */
@@ -110,21 +150,27 @@ button:hover {
     font-size: 22px;
     font-weight: 600;
     margin-bottom: 10px;
-    color: #1e293b;
+}
+
+#icono-clima {
+    font-size: 80px;
+    line-height: 1;
+    margin-bottom: 8px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 #temp {
     font-size: 56px;
     font-weight: 700;
-    color: #475569;
     margin-bottom: 6px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 #descripcion {
     font-size: 18px;
-    color: #64748b;
     margin-bottom: 20px;
     text-transform: capitalize;
+    opacity: 0.9;
 }
 
 #detalles {
@@ -132,6 +178,11 @@ button:hover {
     justify-content: center;
     gap: 24px;
     font-size: 14px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 #detalles .detalle {
@@ -139,20 +190,22 @@ button:hover {
 }
 
 #detalles .label {
-    color: #94a3b8;
+    color: rgba(255, 255, 255, 0.7);
     font-size: 12px;
     margin-bottom: 2px;
 }
 
 #detalles .valor {
     font-weight: 600;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 /* pie de pagina */
 footer {
-    background: #1e293b;
-    color: #94a3b8;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: rgba(255, 255, 255, 0.7);
     text-align: center;
     padding: 14px;
     font-size: 12px;
