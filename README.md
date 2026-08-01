@@ -37,8 +37,8 @@ Replace the `API_KEY` value at the top of `app.js` with your own.
 
 - [x] **Beta 1** — basic weather lookup
 - [x] **Beta 2** — redesigned UI (glassmorphism, gradients, icons)
-- [ ] **Beta 3** — 5-day forecast + temperature chart
-- [ ] **Beta 4** — geolocation + favorites + PWA installable
+- [x] **Beta 3** — 5-day forecast + temperature chart
+- [x] **Beta 4** — geolocation + favorites + PWA installable
       
 ## Lessons from building this
 
