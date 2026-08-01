@@ -1,0 +1,17 @@
+{
+  "name": "Weather App",
+  "short_name": "Weather",
+  "description": "Busca el clima de cualquier ciudad",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#28313b",
+  "theme_color": "#475569",
+  "icons": [
+    {
+      "src": "icono.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

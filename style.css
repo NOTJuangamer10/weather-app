@@ -210,3 +210,218 @@ footer {
     padding: 14px;
     font-size: 12px;
 }
+
+
+/* === BETA 3: estilos del pronostico y el grafico === */
+
+#pronostico {
+    display: none;
+    text-align: center;
+}
+
+#pronostico h2 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: white;
+    text-align: left;
+}
+
+/* lista de los 5 dias */
+#lista-dias {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.dia-pronostico {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 10px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.dia-nombre {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dia-icono {
+    font-size: 28px;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.dia-temps {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+}
+
+.temp-max {
+    font-weight: 600;
+    color: white;
+}
+
+.temp-min {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+/* grafico de temperaturas */
+#grafico {
+    width: 100%;
+    max-width: 560px;
+    height: 200px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    margin: 0 auto;
+    display: block;
+}
+
+/* leyenda del grafico */
+#grafico-leyenda {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.75);
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+#grafico-leyenda .punto-max,
+#grafico-leyenda .punto-min {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 4px;
+}
+
+#grafico-leyenda .punto-max {
+    background: #ff6b6b;
+}
+
+#grafico-leyenda .punto-min {
+    background: #74c0fc;
+}
+
+/* responsivo: en pantallas pequeñas los dias se apilan */
+@media (max-width: 480px) {
+    #lista-dias {
+        flex-wrap: wrap;
+    }
+
+    .dia-pronostico {
+        flex: 1 1 30%;
+        margin-bottom: 6px;
+    }
+}
+
+
+/* === BETA 4: estilos de favoritos, estrella y boton ubicacion === */
+
+/* boton de ubicacion */
+#btn-ubicacion {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+#btn-ubicacion:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* estrella de favorito */
+#estrella-favorito {
+    display: inline-block;
+    font-size: 28px;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    margin-left: 10px;
+    vertical-align: middle;
+    transition: color 0.2s, transform 0.2s;
+    user-select: none;
+}
+
+#estrella-favorito:hover {
+    transform: scale(1.2);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+#estrella-favorito.activa {
+    color: #fbbf24;
+    text-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+}
+
+/* seccion de favoritos */
+#favoritos {
+    margin-top: 12px;
+}
+
+#favoritos-titulo {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+#favoritos-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.chip-favorito {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+}
+
+.chip-favorito:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.chip-cruz {
+    margin-left: 6px;
+    font-size: 15px;
+    line-height: 1;
+    opacity: 0.7;
+}
+
+.chip-cruz:hover {
+    opacity: 1;
+    color: rgba(255, 200, 200, 0.9);
+}
+
+/* === BETA 4: cambiar font a Space Grotesk === */
+/* pongo !important para pisar el system-ui que puse en la beta 2 */
+body,
+header,
+input,
+button,
+#ciudad,
+#temp,
+#descripcion,
+#detalles,
+.dia-pronostico,
+.dia-nombre,
+.chip-favorito,
+#favoritos-titulo,
+footer {
+    font-family: 'Space Grotesk', sans-serif !important;
+}
