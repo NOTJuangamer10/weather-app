@@ -581,3 +581,301 @@ var linkFuente = document.createElement('link');
 linkFuente.href = 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap';
 linkFuente.rel = 'stylesheet';
 document.head.appendChild(linkFuente);
+
+
+
+// === WEATHER APP PATCH: settings + i18n + unidades + welcome ===
+// Añade:
+// 1. Botón de ajustes (engranaje) en el header
+// 2. Panel de settings: idioma (ES/EN) y unidades (°C/°F)
+// 3. Traducciones ES/EN con data-i18n
+// 4. Conversión de unidades al vuelo
+// 5. Estado de bienvenida más cuidadito cuando no hay búsqueda
+
+
+// --- preferencias guardadas ---
+var PREFS_KEY = 'weather_app_prefs';
+
+function cargarPrefs() {
+    var datos = localStorage.getItem(PREFS_KEY);
+    if (!datos) return { idioma: 'es', unidades: 'C' };
+    try { return JSON.parse(datos); } catch (e) { return { idioma: 'es', unidades: 'C' }; }
+}
+
+function guardarPrefs(prefs) {
+    localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
+}
+
+var prefs = cargarPrefs();
+
+
+// --- traducciones ---
+var TRADUCCIONES = {
+    es: {
+        titulo: 'Weather App',
+        subtitulo: 'beta 4 - busca el clima de cualquier ciudad',
+        placeholder: 'escribe una ciudad...',
+        buscar: 'Buscar',
+        miUbicacion: 'Mi ubicacion',
+        humedad: 'Humedad',
+        viento: 'Viento',
+        sensacion: 'Sensacion',
+        buscando: 'buscando...',
+        detectando: 'detectando ubicacion...',
+        noEncontrada: 'No se encontro la ciudad. Prueba con otra.',
+        noUbicacion: 'No se pudo obtener tu ubicacion. Revisa los permisos.',
+        favoritos: 'Favoritos',
+        pronostico: 'Pronostico 5 dias',
+        maximas: 'maximas',
+        minimas: 'minimas',
+        settings: 'Ajustes',
+        idioma: 'Idioma',
+        unidades: 'Unidades',
+        cerrar: 'Cerrar',
+        bienvenidaTitulo: 'Busca el clima',
+        bienvenidaDesc: 'escribe una ciudad o usa tu ubicacion para empezar',
+        dias: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab']
+    },
+    en: {
+        titulo: 'Weather App',
+        subtitulo: 'beta 4 - search the weather of any city',
+        placeholder: 'type a city...',
+        buscar: 'Search',
+        miUbicacion: 'My location',
+        humedad: 'Humidity',
+        viento: 'Wind',
+        sensacion: 'Feels like',
+        buscando: 'searching...',
+        detectando: 'detecting location...',
+        noEncontrada: 'City not found. Try another one.',
+        noUbicacion: 'Could not get your location. Check permissions.',
+        favoritos: 'Favorites',
+        pronostico: '5-day forecast',
+        maximas: 'highs',
+        minimas: 'lows',
+        settings: 'Settings',
+        idioma: 'Language',
+        unidades: 'Units',
+        cerrar: 'Close',
+        bienvenidaTitulo: 'Search the weather',
+        bienvenidaDesc: 'type a city or use your location to start',
+        dias: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    }
+};
+
+function t(key) {
+    var trad = TRADUCCIONES[prefs.idioma] || TRADUCCIONES.es;
+    return trad[key] || key;
+}
+
+
+// --- conversión de unidades ---
+function convertirTemp(celsius) {
+    if (prefs.unidades === 'F') {
+        return Math.round(celsius * 9 / 5 + 32) + '\u00B0F';
+    }
+    return Math.round(celsius) + '\u00B0C';
+}
+
+function convertirVelocidad(kmh) {
+    if (prefs.unidades === 'F') {
+        // mph
+        return Math.round(kmh * 0.621371) + ' mph';
+    }
+    return Math.round(kmh) + ' km/h';
+}
+
+
+// --- aplicar traducciones al DOM ---
+function aplicarIdioma() {
+    // traducir elementos con data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+        var key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+    });
+    // traducir placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+        var key = el.getAttribute('data-i18n-placeholder');
+        el.placeholder = t(key);
+    });
+}
+
+
+// --- crear el botón de settings y el panel ---
+var headerEl = document.querySelector('header');
+var btnSettings = document.createElement('button');
+btnSettings.type = 'button';
+btnSettings.id = 'btn-settings';
+btnSettings.innerHTML = '\u2699';  // símbolo engranaje
+btnSettings.title = 'Settings';
+headerEl.appendChild(btnSettings);
+
+var panelSettings = document.createElement('div');
+panelSettings.id = 'panel-settings';
+panelSettings.style.display = 'none';
+panelSettings.innerHTML =
+    '<div class="settings-fila">' +
+    '<span data-i18n="idioma">Idioma</span>' +
+    '<div class="settings-toggle">' +
+    '<button data-lang="es" class="' + (prefs.idioma === 'es' ? 'active' : '') + '">ES</button>' +
+    '<button data-lang="en" class="' + (prefs.idioma === 'en' ? 'active' : '') + '">EN</button>' +
+    '</div>' +
+    '</div>' +
+    '<div class="settings-fila">' +
+    '<span data-i18n="unidades">Unidades</span>' +
+    '<div class="settings-toggle">' +
+    '<button data-unit="C" class="' + (prefs.unidades === 'C' ? 'active' : '') + '">\u00B0C</button>' +
+    '<button data-unit="F" class="' + (prefs.unidades === 'F' ? 'active' : '') + '">\u00B0F</button>' +
+    '</div>' +
+    '</div>';
+document.body.appendChild(panelSettings);
+
+// toggle del panel
+btnSettings.addEventListener('click', function () {
+    panelSettings.style.display = panelSettings.style.display === 'none' ? 'block' : 'none';
+});
+
+// cerrar al clickar fuera
+document.addEventListener('click', function (e) {
+    if (!panelSettings.contains(e.target) && e.target !== btnSettings) {
+        panelSettings.style.display = 'none';
+    }
+});
+
+// cambiar idioma
+panelSettings.querySelectorAll('[data-lang]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        prefs.idioma = btn.getAttribute('data-lang');
+        guardarPrefs(prefs);
+        panelSettings.querySelectorAll('[data-lang]').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        aplicarIdioma();
+        // re-renderizar el clima si ya hay resultado
+        if (resultado.style.display === 'block') {
+            // re-buscar la ultima ciudad
+            var ultimaCiudad = ciudad.textContent.split(',')[0];
+            buscarClima(ultimaCiudad);
+        }
+    });
+});
+
+// cambiar unidades
+panelSettings.querySelectorAll('[data-unit]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        prefs.unidades = btn.getAttribute('data-unit');
+        guardarPrefs(prefs);
+        panelSettings.querySelectorAll('[data-unit]').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        // re-renderizar si hay resultado
+        if (resultado.style.display === 'block') {
+            var ultimaCiudad = ciudad.textContent.split(',')[0];
+            buscarClima(ultimaCiudad);
+        }
+    });
+});
+
+
+// --- mejorar el estado de bienvenida ---
+// añadir data-i18n a los elementos existentes para poder traducirlos
+var h1El = document.querySelector('header h1');
+var pEl = document.querySelector('header p');
+var inputEl = document.getElementById('input-ciudad');
+var btnBuscar = document.querySelector('form button[type=submit]');
+var btnUbicacion = document.getElementById('btn-ubicacion');
+
+if (h1El) h1El.setAttribute('data-i18n', 'titulo');
+if (pEl) pEl.setAttribute('data-i18n', 'subtitulo');
+if (inputEl) inputEl.setAttribute('data-i18n-placeholder', 'placeholder');
+if (btnBuscar) btnBuscar.setAttribute('data-i18n', 'buscar');
+if (btnUbicacion) btnUbicacion.setAttribute('data-i18n', 'miUbicacion');
+
+// crear el mensaje de bienvenida si no existe
+var welcomeEl = document.createElement('div');
+welcomeEl.id = 'welcome-state';
+welcomeEl.innerHTML =
+    '<div class="welcome-icon">\u2600</div>' +
+    '<h2 data-i18n="bienvenidaTitulo">Busca el clima</h2>' +
+    '<p data-i18n="bienvenidaDesc">escribe una ciudad o usa tu ubicacion para empezar</p>';
+// lo meto dentro de la sección de búsqueda, después del form
+var seccionBusqueda = document.getElementById('busqueda');
+if (seccionBusqueda) {
+    seccionBusqueda.appendChild(welcomeEl);
+}
+
+
+// --- redefinir mostrarClima para usar unidades convertidas ---
+// guardo la funcion vieja (que ya incluye la Beta 3 con favoritos)
+var mostrarClimaSettingsViejo = mostrarClima;
+mostrarClima = function (datos) {
+    // llamo a la funcion vieja para que haga todo lo de antes (gif, favoritos, etc)
+    mostrarClimaSettingsViejo(datos);
+
+    // ahora sobreescribo las temperaturas con la unidad correcta
+    var tempEl = document.getElementById('temp');
+    if (tempEl && datos.main) {
+        tempEl.textContent = convertirTemp(datos.main.temp);
+    }
+
+    // sensacion termica
+    var detalles = document.getElementById('detalles');
+    if (detalles && datos.main && datos.wind) {
+        // reconstruyo los detalles con las unidades correctas
+        detalles.innerHTML = '';
+        detalles.appendChild(crearDetalleLang('humedad', datos.main.humidity + '%'));
+        detalles.appendChild(crearDetalleLang('viento', convertirVelocidad(datos.wind.speed)));
+        detalles.appendChild(crearDetalleLang('sensacion', convertirTemp(datos.main.feels_like)));
+    }
+
+    // ocultar el welcome state
+    if (welcomeEl) welcomeEl.style.display = 'none';
+};
+
+// helper que crea un detalle con label traducido
+function crearDetalleLang(labelKey, valor) {
+    var div = document.createElement('div');
+    div.className = 'detalle';
+    var lab = document.createElement('div');
+    lab.className = 'label';
+    lab.textContent = t(labelKey);
+    lab.setAttribute('data-i18n', labelKey);
+    var val = document.createElement('div');
+    val.className = 'valor';
+    val.textContent = valor;
+    div.appendChild(lab);
+    div.appendChild(val);
+    return div;
+}
+
+
+// --- redefinir mostrarError para traducir ---
+var mostrarErrorViejo = mostrarError;
+mostrarError = function (mensaje) {
+    // si el mensaje es uno de los conocidos, traducirlo
+    var traduccion = mensaje;
+    if (mensaje.indexOf('No se encontro') !== -1 || mensaje.indexOf('not found') !== -1) {
+        traduccion = t('noEncontrada');
+    } else if (mensaje.indexOf('ubicacion') !== -1 || mensaje.indexOf('location') !== -1) {
+        traduccion = t('noUbicacion');
+    }
+    mostrarErrorViejo(traduccion);
+    // ocultar welcome al haber error (ya hay algo buscando)
+    if (welcomeEl) welcomeEl.style.display = 'none';
+};
+
+
+// --- redefinir buscarClima para traducir "buscando..." ---
+var buscarClimaViejo = buscarClima;
+buscarClima = function (ciudadBuscada) {
+    // traducir el mensaje de cargando
+    cargando.textContent = t('buscando');
+    buscarClimaViejo(ciudadBuscada);
+};
+
+
+// --- aplicar idioma al cargar ---
+aplicarIdioma();
+
+// mostrar welcome state al inicio (si no hay resultado)
+if (resultado.style.display !== 'block' && welcomeEl) {
+    welcomeEl.style.display = 'block';
+}
